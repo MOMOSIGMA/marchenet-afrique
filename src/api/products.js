@@ -1,7 +1,7 @@
 import api from './index';
 
 // Modifiez le chemin si nécessaire selon votre API
-export const getProducts = (params) => api.get('/api/products', { params });
+export const getProducts = (params) => api.get('/products', { params });
 // Ajoutez '/api' si votre backend l'attend
 
 // Détail d'un produit
