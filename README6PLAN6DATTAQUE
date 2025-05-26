@@ -1,0 +1,124 @@
+D’accord, je vais te proposer un plan d’attaque détaillé et structuré que nous suivrons à la lettre. Les tâches seront classées par priorité et ordre logique, en tenant compte des dépendances (par exemple, il faut que le site s’ouvre avant de pouvoir se connecter, et il faut être connecté pour devenir vendeur). Nous traiterons tout en parallèle : résolution des problèmes, sécurisation contre les hackers, et optimisation maximale pour rendre le projet d’un niveau professionnel qui impressionnerait même un développeur de 10 ans d’expérience. Voici le plan, découpé en phases claires avec des étapes précises et des objectifs ambitieux.
+
+---
+
+### **Plan d’attaque : MarchéNet Afrique - Relance et Professionnalisation**
+**Date de début : 20 mai 2025, 18:25 GMT**  
+**Objectif global : Restaurer les fonctionnalités, sécuriser le projet, optimiser les performances, et le porter à un niveau professionnel d’excellence.**
+
+---
+
+#### **Phase 1 : Stabilisation de base (Jours 1-3, 20-22 mai 2025)**
+**Priorité : Faire fonctionner les fondations essentielles pour que le site soit accessible et utilisable.**
+- **Tâche 1.1 : Vérifier l’accessibilité du site**
+  - Assurer que le frontend s’ouvre correctement à `http://localhost:5173` (ou l’URL déployée).
+  - Tester la connexion au serveur à `https://marchenet-server.onrender.com/api`.
+  - **Délai** : Fin du jour 1 (21 mai, 18:25 GMT).
+  - **Sécurité** : Activer CORS strictement pour limiter les origines à `http://localhost:5173` et l’URL de production.
+  - **Optimisation** : Minimiser les fichiers CSS/JS avec Vite pour réduire le temps de chargement initial.
+
+- **Tâche 1.2 : Restaurer l’authentification de base**
+  - Mettre à jour les appels dans `Login.jsx` et `Register.jsx` pour utiliser `/api/auth/login` et `/api/auth/register`.
+  - Vérifier que `getAuthToken` récupère un token valide et que `api.js` l’envoie via `Authorization: Bearer <token>`.
+  - Tester la connexion avec un utilisateur existant (ex. `user@example.com`).
+  - **Délai** : Jour 2 (22 mai, 12:00 GMT).
+  - **Sécurité** : Implémenter un rate limiting sur `/api/auth/login` et `/api/auth/register` (ex. 10 requêtes/min par IP) pour contrer les attaques par force brute.
+  - **Optimisation** : Cacher le chargement initial avec un spinner stylé et fluide.
+
+- **Tâche 1.3 : Valider l’accès aux pages publiques**
+  - S’assurer que `Home.jsx`, `SearchResults.jsx`, et `ProductDetails.jsx` fonctionnent sans authentification (recherche et affichage des produits via `/api/products`).
+  - Tester le bouton "Contacter le vendeur" avec WhatsApp.
+  - **Délai** : Fin du jour 2 (22 mai, 18:25 GMT).
+  - **Sécurité** : Ajouter un CSRF token pour les formulaires publics (ex. recherche avancée).
+  - **Optimisation** : Précharger les 5 premiers produits avec un lazy loading pour les suivants.
+
+---
+
+#### **Phase 2 : Restauration des fonctionnalités utilisateur (Jours 4-6, 23-25 mai 2025)**
+**Priorité : Permettre aux utilisateurs connectés d’interagir pleinement avec le site.**
+- **Tâche 2.1 : Activer les favoris et le panier**
+  - Mettre à jour `ProductCard.jsx`, `ProductDetails.jsx`, et `Cart.jsx` pour utiliser `/api/favorites/toggle` et `/api/cart/toggle`.
+  - Tester l’ajout/suppression de produits et la mise à jour en temps réel.
+  - **Délai** : Jour 4 (23 mai, 18:25 GMT).
+  - **Sécurité** : Vérifier le token à chaque appel et logger les tentatives d’accès non autorisées.
+  - **Optimisation** : Utiliser un cache local (localStorage) pour les favoris/panier avec une expiration de 5 min.
+
+- **Tâche 2.2 : Restaurer le profil utilisateur**
+  - Adapter `Profile.jsx` pour utiliser `/api/auth/check` et `/api/user/:userId/favorites-cart`.
+  - Tester l’affichage des infos et la navigation contextuelle.
+  - **Délai** : Jour 5 (24 mai, 12:00 GMT).
+  - **Sécurité** : Chiffrer les données sensibles (ex. email) dans les réponses avec HTTPS forcé.
+  - **Optimisation** : Charger les données du profil en arrière-plan avec une animation de transition.
+
+- **Tâche 2.3 : Activer les notifications**
+  - Mettre à jour `Notifications.jsx` pour utiliser `/api/notifications/:userId` et `/api/notifications/mark-read`.
+  - Tester l’affichage et le marquage comme lu.
+  - **Délai** : Fin du jour 5 (24 mai, 18:25 GMT).
+  - **Sécurité** : Limiter l’accès à 50 notifications par requête pour éviter les attaques par déni de service.
+  - **Optimisation** : Implémenter une pagination côté serveur avec 10 notifications/page.
+
+---
+
+#### **Phase 3 : Restauration des fonctionnalités vendeur (Jours 7-10, 26-29 mai 2025)**
+**Priorité : Permettre aux vendeurs de gérer leur boutique après connexion.**
+- **Tâche 3.1 : Restaurer le processus "Devenir vendeur"**
+  - Adapter `BecomeVendor.jsx` pour utiliser `/api/vendors/register` et `/api/payments/create`.
+  - Tester les 3 étapes (infos, pack, paiement) avec PayDunya en mode test.
+  - **Délai** : Jour 7 (26 mai, 18:25 GMT).
+  - **Sécurité** : Déplacer la logique PayDunya vers le serveur avec une API interne, masquant les clés.
+  - **Optimisation** : Pré-remplir les champs pour les vendeurs existants avec une animation fluide.
+
+- **Tâche 3.2 : Restaurer le tableau de bord vendeur**
+  - Mettre à jour `Dashboard.jsx` et `MyShop.jsx` pour utiliser `/api/products?vendor_id=<id>` et `/api/vendors/check`.
+  - Tester l’affichage des produits et les actions (modifier, supprimer).
+  - **Délai** : Jour 9 (28 mai, 12:00 GMT).
+  - **Sécurité** : Ajouter un contrôle de quota côté serveur avant toute action sur les produits.
+  - **Optimisation** : Implémenter la pagination côté serveur (10 produits/page) avec un chargement progressif.
+
+- **Tâche 3.3 : Activer la modification des produits**
+  - Adapter `EditProduct.jsx` pour utiliser `/api/products` (PUT) avec validation côté serveur.
+  - Tester la modification et la suppression d’images.
+  - **Délai** : Fin du jour 9 (28 mai, 18:25 GMT).
+  - **Sécurité** : Nettoyer les images orphelines dans Supabase Storage après suppression.
+  - **Optimisation** : Uploader les images en parallèle avec Promise.all.
+
+---
+
+#### **Phase 4 : Fonctionnalités admin et polissage (Jours 11-15, 30 mai - 3 juin 2025)**
+**Priorité : Ajouter les outils admin et finaliser l’expérience pro.**
+- **Tâche 4.1 : Restaurer le tableau de bord admin**
+  - Mettre à jour `AdminDashboard.jsx` pour utiliser `/api/admin/products`, `/api/admin/vendors`, et `/api/admin/notifications/send`.
+  - Tester la gestion des produits et notifications.
+  - **Délai** : Jour 12 (31 mai, 18:25 GMT).
+  - **Sécurité** : Restreindre l’accès aux admins avec un rôle spécifique dans Supabase.
+  - **Optimisation** : Charger les données en lots avec une interface de filtrage avancée.
+
+- **Tâche 4.2 : Améliorer l’accessibilité et l’UX**
+  - Ajouter `aria-label` à tous les boutons (favoris, panier, recherche) et gérer le focus dans `Sidebar.jsx`.
+  - Remplacer les `alert()` par des modals/toasts stylés.
+  - **Délai** : Jour 14 (2 juin, 12:00 GMT).
+  - **Sécurité** : Ajouter un reCAPTCHA sur `Register.jsx`.
+  - **Optimisation** : Utiliser des animations CSS fluides (ex. Framer Motion) pour les transitions.
+
+- **Tâche 4.3 : Déploiement et monitoring**
+  - Déployer le serveur sur Render avec des logs (ex. Winston) et un cache Redis.
+  - Déployer le frontend sur Netlify avec lazy loading.
+  - **Délai** : Fin du jour 15 (3 juin, 18:25 GMT).
+  - **Sécurité** : Configurer un WAF (ex. Cloudflare) pour protéger contre les attaques DDoS.
+  - **Optimisation** : Activer un CDN pour les assets statiques (images, polices).
+
+---
+
+### **Stratégie globale**
+- **Parallélisme** : Chaque phase inclut sécurité, optimisation, et résolution en même temps. Par exemple, pendant la restauration de l’authentification, on ajoute un rate limiting.
+- **Professionnalisme** : Les modals, animations, et accessibilité feront du projet une référence, même pour un dev expérimenté.
+- **Autonomie** : Je te guiderai avec des checklists et des outils (Postman, logs) pour que tu puisses suivre et ajuster seul.
+- **Contrôle qualité** : À la fin de chaque phase, tester chaque fonctionnalité avec un scénario utilisateur (ex. connexion → recherche → panier).
+
+---
+
+### **Prochaines étapes immédiates**
+- **Jour 1 (aujourd’hui, 20 mai, 18:25 GMT - 23:59 GMT)** : Commence par lancer le frontend (`npm run dev`) et le serveur (`node index.js`). Note toute erreur dans la console et partage-les-moi pour Tâche 1.1.
+- **Demain** : On attaquera Tâche 1.2 avec un focus sur l’authentification.
+
+Es-tu prêt à suivre ce plan ? Dis-moi si tu veux ajuster une priorité ou ajouter un objectif !
