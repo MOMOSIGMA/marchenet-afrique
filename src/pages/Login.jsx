@@ -1,8 +1,8 @@
 import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { login } from '../utils/auth';
+import { login } from '../api/auth'; // Correction du chemin
 import api from '../api';
-import { useAuth } from '../context/AuthContext'; // <-- Correction ici
+import { useAuth } from '../context/AuthContext';
 
 function Login({ setIsAuthenticated }) {
   const { checkAuthStatus } = useAuth();
@@ -26,15 +26,16 @@ function Login({ setIsAuthenticated }) {
     setLoading(true);
 
     try {
-      const result = await login(formData.email, formData.password, navigate, checkAuthStatus);
-      if (result.success) {
+      const response = await login(formData.email, formData.password);
+      if (response.status === 200) {
+        await checkAuthStatus();
         setIsAuthenticated(true);
-        // La redirection est déjà faite dans login, donc pas besoin ici
+        navigate('/dashboard');
       } else {
-        throw new Error(result.error || 'Erreur lors de la connexion.');
+        setError("Échec de la connexion.");
       }
     } catch (err) {
-      setError(err.message || 'Erreur lors de la connexion.');
+      setError(err.response?.data?.error || 'Erreur lors de la connexion.');
     } finally {
       setLoading(false);
     }
@@ -65,8 +66,12 @@ function Login({ setIsAuthenticated }) {
           </p>
         </div>
         {error && (
-          <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative" role="alert">
-            <span className="block sm:inline">{error}</span>
+          <div
+            className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative"
+            role="alert"
+            aria-describedby="login-error"
+          >
+            <span id="login-error" className="block sm:inline">{error}</span>
           </div>
         )}
         <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
@@ -80,6 +85,7 @@ function Login({ setIsAuthenticated }) {
                 name="email"
                 type="email"
                 required
+                aria-describedby={error ? "login-error" : undefined}
                 className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm"
                 placeholder="Adresse email"
                 value={formData.email}
@@ -96,6 +102,7 @@ function Login({ setIsAuthenticated }) {
                   name="password"
                   type={showPassword ? 'text' : 'password'}
                   required
+                  aria-describedby={error ? "login-error" : undefined}
                   className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-b-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm pr-10"
                   placeholder="Mot de passe"
                   value={formData.password}
@@ -105,6 +112,7 @@ function Login({ setIsAuthenticated }) {
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
                   className="absolute inset-y-0 right-0 flex items-center pr-3 text-gray-600 hover:text-gray-800"
+                  aria-label={showPassword ? "Masquer le mot de passe" : "Afficher le mot de passe"}
                 >
                   {showPassword ? (
                     <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
