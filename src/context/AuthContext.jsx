@@ -36,6 +36,7 @@ export function AuthProvider({ children }) {
     localStorage.setItem("authToken", res.data.token);
     setAuthToken(res.data.token); // Ajoute le token dans axios
     setUser(res.data.user);
+    // Appelle vendors/me SEULEMENT après avoir mis à jour le token dans axios
     const vendorRes = await api.get("/vendors/me");
     setIsVendor(!!vendorRes.data);
   };

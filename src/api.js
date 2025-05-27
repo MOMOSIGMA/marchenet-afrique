@@ -4,7 +4,7 @@ const serverUrl = import.meta.env.VITE_API_URL || 'https://marchenet-server.onre
 
 const api = axios.create({
   baseURL: `${serverUrl}/api`,
-  withCredentials: false,
+  withCredentials: false, // <-- doit être false si tu utilises Authorization
   timeout: 10000, // Timeout de 10s pour éviter les blocages
 });
 
