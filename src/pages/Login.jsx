@@ -1,11 +1,9 @@
 import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { login } from '../api/auth'; // Correction du chemin
-import api from '../api';
 import { useAuth } from '../context/AuthContext';
 
-function Login({ setIsAuthenticated }) {
-  const { checkAuthStatus } = useAuth();
+function Login() {
+  const { login } = useAuth();
   const [formData, setFormData] = useState({
     email: '',
     password: '',
@@ -26,14 +24,8 @@ function Login({ setIsAuthenticated }) {
     setLoading(true);
 
     try {
-      const response = await login(formData.email, formData.password);
-      if (response.status === 200) {
-        await checkAuthStatus();
-        setIsAuthenticated(true);
-        navigate('/dashboard');
-      } else {
-        setError("Échec de la connexion.");
-      }
+      await login(formData.email, formData.password);
+      navigate('/dashboard');
     } catch (err) {
       setError(err.response?.data?.error || 'Erreur lors de la connexion.');
     } finally {
