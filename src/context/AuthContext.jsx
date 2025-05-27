@@ -1,5 +1,5 @@
 import { createContext, useContext, useState, useEffect } from "react";
-import api from "../api";
+import api, { setAuthToken } from "../api"; // Utilise api.js
 
 const AuthContext = createContext();
 
@@ -14,6 +14,7 @@ export function AuthProvider({ children }) {
         const res = await api.get("/auth/check");
         if (res.data.user) {
           setUser(res.data.user);
+          setAuthToken(localStorage.getItem("authToken")); // Ajoute le token pour les requêtes suivantes
           const vendorRes = await api.get("/vendors/me");
           setIsVendor(!!vendorRes.data);
         } else {
@@ -33,6 +34,7 @@ export function AuthProvider({ children }) {
   const login = async (email, password) => {
     const res = await api.post("/auth/login", { email, password });
     localStorage.setItem("authToken", res.data.token);
+    setAuthToken(res.data.token); // Ajoute le token dans axios
     setUser(res.data.user);
     const vendorRes = await api.get("/vendors/me");
     setIsVendor(!!vendorRes.data);
@@ -41,6 +43,7 @@ export function AuthProvider({ children }) {
   const logout = async () => {
     await api.post("/auth/logout");
     localStorage.removeItem("authToken");
+    setAuthToken(null); // Retire le token
     setUser(null);
     setIsVendor(false);
   };
@@ -48,6 +51,7 @@ export function AuthProvider({ children }) {
   const register = async (formData) => {
     const res = await api.post("/auth/register", formData);
     localStorage.setItem("authToken", res.data.token);
+    setAuthToken(res.data.token); // Ajoute le token dans axios
     setUser(res.data.user);
     setIsVendor(false);
   };
@@ -61,7 +65,7 @@ export function AuthProvider({ children }) {
         login,
         logout,
         register,
-        isAuthenticated: !!user, // Ajout ici
+        isAuthenticated: !!user,
       }}
     >
       {children}
